@@ -11,7 +11,6 @@ import java.util.Calendar;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.uma.example.springuma.controller.InformeController;
 import com.uma.example.springuma.model.Imagen;
 import com.uma.example.springuma.model.Medico;
 import com.uma.example.springuma.model.Paciente;
@@ -32,7 +31,7 @@ import jakarta.annotation.PostConstruct;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class InformeControllerIT {
+class InformeControllerWebTestClienteIT {
 
     @LocalServerPort
     private Integer port;

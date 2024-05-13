@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ImagenControllerIT {
+public class ImagenControllerWebTestClienteIT {
 
     @LocalServerPort
     private Integer port;
