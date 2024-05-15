@@ -1,3 +1,7 @@
+/*
+ * @author: Miguel Galdeano Rodríguez
+ * @author: Pablo León Vázquez
+ */
 package com.uma.example.springuma.integration;
 
 import java.io.File;

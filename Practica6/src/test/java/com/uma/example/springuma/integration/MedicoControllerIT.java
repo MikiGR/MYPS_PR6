@@ -1,3 +1,7 @@
+/*
+ * @author: Miguel Galdeano Rodríguez
+ * @author: Pablo León Vázquez
+ */
 package com.uma.example.springuma.integration;
 
 import static org.hamcrest.Matchers.containsString;
@@ -11,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +29,38 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.uma.example.springuma.integration.base.AbstractIntegration;
 import com.uma.example.springuma.model.Medico;
+import com.uma.example.springuma.model.Paciente;
 
 @AutoConfigureMockMvc
 class MedicoControllerIT extends AbstractIntegration {
+
+    Medico medico;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+     @BeforeEach
+    public void init(){
+        medico = new Medico();
+        medico.setDni("123");
+        medico.setId(1);
+        medico.setNombre("Alberto");
+
+    }
+
+    @Test
+    @DisplayName("Cuando intento crear un medico, se crea exitosamente")
+	void createMedico_returnTrue() throws Exception {
+        // crea un medico
+        this.mockMvc.perform(post("/medico")
+        .contentType("application/json")
+        .content(objectMapper.writeValueAsString(medico)))
+        .andExpect(status().isCreated())
+        .andExpect(status().is2xxSuccessful());
+    }
 
     @Test
     @DisplayName("Cuando intento obtener un medico que no existe, se lanza una excepcion")
@@ -43,11 +71,7 @@ class MedicoControllerIT extends AbstractIntegration {
 
     @Test
     @DisplayName("Cuando intento obtener un medico que si existe, lo retorna correctamente")
-	void getMedico_inDB_returnTrue() throws Exception {
-        int id = 1;
-        Medico medico = new Medico("125","Alberto Canovas","Traumatología");
-        medico.setId(id);
-        
+	void getMedico_exists_returnTrue() throws Exception {
 
         // crea un medico
         this.mockMvc.perform(post("/medico")
@@ -65,37 +89,10 @@ class MedicoControllerIT extends AbstractIntegration {
         .andExpect(jsonPath("$.nombre").value(medico.getNombre())) // comprueba que el nombre es igual al de la persona creada
         .andExpect(jsonPath("$.especialidad").value(medico.getEspecialidad())); // comprueba que la especialidad es igual a la de la persona creada
     }
-/* 
-    @Test
-    @DisplayName("Cuando intento guardar un Medico que ya existe, se lanza una excecpion")
-	void saveMedico_alreadyExists_throwException() throws Exception {
-        int id = 1;
-        Medico medico = new Medico("125","Alberto Canovas","Traumatología");
-        medico.setId(id);
-        
 
-        // crea un medico
-        this.mockMvc.perform(post("/medico")
-        .contentType("application/json")
-        .content(objectMapper.writeValueAsString(medico)))
-        .andExpect(status().isCreated())
-        .andExpect(status().is2xxSuccessful());
-
-       // intento volver a crear el mismo medico
-       this.mockMvc.perform(post("/medico")
-       .contentType("application/json")
-       .content(objectMapper.writeValueAsString(medico)))
-       .andExpect(status().isBadRequest());
-    }
-*/
     @Test
     @DisplayName("Cuando modifico algun campo de algun medico y lo guardo, se actualiza correctamente")
 	void getMedico_modifyAttributes_returnTrue() throws Exception {
-        int id = 1;
-        Medico medico = new Medico("125","Alberto Canovas","Traumatología");
-        medico.setId(id);
-        
-
         // crea el medico
         this.mockMvc.perform(post("/medico")
         .contentType("application/json")
@@ -109,7 +106,7 @@ class MedicoControllerIT extends AbstractIntegration {
         this.mockMvc.perform(put("/medico")
         .contentType("application/json")
         .content(objectMapper.writeValueAsString(medico)))
-        .andExpect(status().is2xxSuccessful());
+        .andExpect(status().isNoContent());
         
 
         // obtiene el listado de personas
@@ -124,13 +121,8 @@ class MedicoControllerIT extends AbstractIntegration {
     }
 
     @Test
-    @DisplayName("Cuando elimino un paciente, se elimina correctamente")
-	void deleteMedico_noMedico_throwException() throws Exception {
-        int id = 1;
-        Medico medico = new Medico("125","Alberto Canovas","Traumatología");
-        medico.setId(id);
-        
-
+    @DisplayName("Cuando elimino un medico, se elimina correctamente")
+	void deleteMedico_exists_returnTrue() throws Exception {
         // crea el medico
         this.mockMvc.perform(post("/medico")
         .contentType("application/json")
